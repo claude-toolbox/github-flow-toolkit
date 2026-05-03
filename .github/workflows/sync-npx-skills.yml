@@ -20,21 +20,21 @@ jobs:
 
           # git-commit from github/awesome-copilot
           git clone --depth 1 https://github.com/github/awesome-copilot.git "$TMP/awesome-copilot"
-          cp "$TMP/awesome-copilot/git-commit/SKILL.md" ".claude/plugins/github-flow-toolkit/skills/git-commit/SKILL.md"
+          cp "$TMP/awesome-copilot/skills/git-commit/SKILL.md" ".claude/plugins/github-flow-toolkit/skills/git-commit/SKILL.md"
 
           # pr-creator from google-gemini/gemini-cli
           git clone --depth 1 https://github.com/google-gemini/gemini-cli.git "$TMP/gemini-cli"
-          cp "$TMP/gemini-cli/pr-creator/SKILL.md" ".claude/plugins/github-flow-toolkit/skills/pr-creator/SKILL.md"
+          cp "$TMP/gemini-cli/.gemini/skills/pr-creator/SKILL.md" ".claude/plugins/github-flow-toolkit/skills/pr-creator/SKILL.md"
 
           # code-review-expert from sanyuan0704/code-review-expert
           git clone --depth 1 https://github.com/sanyuan0704/code-review-expert.git "$TMP/code-review-expert"
-          cp "$TMP/code-review-expert/SKILL.md" ".claude/plugins/github-flow-toolkit/skills/code-review-expert/SKILL.md"
-          cp -R "$TMP/code-review-expert/references/"* ".claude/plugins/github-flow-toolkit/skills/code-review-expert/references/"
+          cp "$TMP/code-review-expert/skills/code-review-expert/SKILL.md" ".claude/plugins/github-flow-toolkit/skills/code-review-expert/SKILL.md"
+          cp -R "$TMP/code-review-expert/skills/code-review-expert/references/"* ".claude/plugins/github-flow-toolkit/skills/code-review-expert/references/"
 
           # github-actions-docs from xixu-me/skills
           git clone --depth 1 https://github.com/xixu-me/skills.git "$TMP/xixu-me-skills"
-          cp "$TMP/xixu-me-skills/github-actions-docs/SKILL.md" ".claude/plugins/github-flow-toolkit/skills/github-actions-docs/SKILL.md"
-          cp -R "$TMP/xixu-me-skills/github-actions-docs/references/"* ".claude/plugins/github-flow-toolkit/skills/github-actions-docs/references/"
+          cp "$TMP/xixu-me-skills/skills/github-actions-docs/SKILL.md" ".claude/plugins/github-flow-toolkit/skills/github-actions-docs/SKILL.md"
+          cp -R "$TMP/xixu-me-skills/skills/github-actions-docs/references/"* ".claude/plugins/github-flow-toolkit/skills/github-actions-docs/references/"
 
           rm -rf "$TMP"
           echo "All skills synced."
