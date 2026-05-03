@@ -1,4 +1,4 @@
-name: Sync npx Skills
+name: Sync Skills
 
 on:
   schedule:
@@ -60,5 +60,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .claude/plugins/github-flow-toolkit/skills/
-          git commit -m "chore(skills): sync npx skills from upstream"
+          git commit -m "chore(skills): sync skills from upstream"
           git push
