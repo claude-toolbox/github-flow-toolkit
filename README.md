@@ -13,6 +13,7 @@ Just say "commit", "create PR", or "review" in natural language — the plugin h
 - **PR Templates** — interactive questionnaire to generate GitHub PR templates, supports single-file and multi-template directory modes with type-specific sections (Feature, Bug Fix, Refactor, Documentation, Chore)
 - **Release Tagging** — create and push release tags
 - **GitHub Actions Docs** — grounded answers from official documentation
+- **GitHub CLI Reference** — comprehensive gh CLI reference for all GitHub operations
 - **Natural Language Routing** — no need to remember commands, just describe what you want
 
 ## Commands
@@ -42,7 +43,7 @@ Add the marketplace, then install the plugin:
 
 ```
 .github/workflows/
-  sync-npx-skills.yml    # Daily CI to sync upstream skills
+  sync-skills.yml    # Daily CI to sync upstream skills
 
 .claude-plugin/
   plugin.json            # Plugin manifest
@@ -71,6 +72,7 @@ skills/
   code-review-expert/    # SOLID + security + quality review
   github-actions-docs/   # GitHub Actions documentation
   github-ruleset-configurator/  # Branch/tag protection rulesets
+  gh-cli/                   # GitHub CLI comprehensive reference
 ```
 
 ## Skills Sources
@@ -80,11 +82,12 @@ Some skills are sourced from [skills.sh](https://skills.sh/) and kept in sync vi
 | Skill | Source |
 |-------|--------|
 | git-commit | [github/awesome-copilot](https://github.com/github/awesome-copilot) |
+| gh-cli | [github/awesome-copilot](https://github.com/github/awesome-copilot) |
 | pr-creator | [google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli) |
 | code-review-expert | [sanyuan0704/code-review-expert](https://github.com/sanyuan0704/code-review-expert) |
 | github-actions-docs | [xixu-me/skills](https://github.com/xixu-me/skills) |
 
-The CI workflow (`sync-npx-skills.yml`) runs daily, fetches the latest SKILL.md files from upstream repos, and commits changes automatically.
+The CI workflow (`sync-skills.yml`) runs daily, fetches the latest SKILL.md files from upstream repos, and commits changes automatically.
 
 ## Rules
 
