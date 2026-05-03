@@ -1,5 +1,5 @@
 ---
-description: Code review with SOLID, security, quality, and dead code analysis
+description: Review pending git changes with SOLID, security, quality, and dead code analysis
 allowed-tools: Bash, Read, Glob, Grep
 ---
 

@@ -8,9 +8,9 @@ Just say "commit", "create PR", or "review" in natural language — the plugin h
 
 - **Conventional Commits** — auto-detect type/scope from diff, generate semantic commit messages
 - **PR Lifecycle** — create PRs with template compliance, merge with strategy selection (squash/merge/rebase)
-- **Code Review** — SOLID violations, security scanning, code quality, dead code detection with P0-P3 severity reports
+- **Code Review** — review pending changes for SOLID violations, security risks, code quality issues, and dead code with P0-P3 severity reports
 - **Branch Protection** — configure GitHub rulesets via interactive presets (basic, strict, open-source, tag protection)
-- **PR Templates** — generate type-specific templates (Feature, Bug Fix, Refactor, Documentation, Chore)
+- **PR Templates** — interactive questionnaire to generate GitHub PR templates, supports single-file and multi-template directory modes with type-specific sections (Feature, Bug Fix, Refactor, Documentation, Chore)
 - **Release Tagging** — create and push release tags
 - **GitHub Actions Docs** — grounded answers from official documentation
 - **Natural Language Routing** — no need to remember commands, just describe what you want
@@ -22,23 +22,20 @@ Just say "commit", "create PR", or "review" in natural language — the plugin h
 | `/github-flow-toolkit:commit` | Commit with conventional commit message |
 | `/github-flow-toolkit:pr` | Create a pull request |
 | `/github-flow-toolkit:merge` | Merge a PR with strategy selection |
-| `/github-flow-toolkit:review` | Code review (SOLID, security, quality, dead code) |
+| `/github-flow-toolkit:review` | Review pending changes (SOLID, security, quality, dead code) |
 | `/github-flow-toolkit:ruleset` | Configure branch/tag protection |
+| `/github-flow-toolkit:pr-template` | Generate PR templates via interactive questionnaire |
 | `/github-flow-toolkit:tag` | Create a release tag |
 
-Or just say "commit", "create PR", "review" etc. in natural language.
+Or just say "commit", "create PR", "review", "pr template" etc. in natural language.
 
 ## Installation
 
-```bash
-claude plugin install github-flow-toolkit
+Add the marketplace, then install the plugin:
+
 ```
-
-Or clone and install locally:
-
-```bash
-git clone https://github.com/<your-username>/github-flow-toolkit.git
-claude plugin install ./github-flow-toolkit
+/plugin marketplace add claude-toolbox/marketplace
+/plugin install github-flow-toolkit@marketplace
 ```
 
 ## Project Structure
@@ -56,6 +53,7 @@ commands/
   merge.md               # /github-flow-toolkit:merge
   review.md              # /github-flow-toolkit:review
   ruleset.md             # /github-flow-toolkit:ruleset
+  pr-template.md         # /github-flow-toolkit:pr-template
   tag.md                 # /github-flow-toolkit:tag
 
 rules/
@@ -73,8 +71,6 @@ skills/
   code-review-expert/    # SOLID + security + quality review
   github-actions-docs/   # GitHub Actions documentation
   github-ruleset-configurator/  # Branch/tag protection rulesets
-
-skills-sources.json      # Upstream source tracking for npx skills
 ```
 
 ## Skills Sources
