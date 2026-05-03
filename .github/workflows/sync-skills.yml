@@ -19,10 +19,12 @@ jobs:
           TMP=$(mktemp -d)
           BASE=".claude/plugins/github-flow-toolkit/skills"
 
-          # git-commit from github/awesome-copilot
+          # git-commit, gh-cli from github/awesome-copilot
           git clone --depth 1 https://github.com/github/awesome-copilot.git "$TMP/awesome-copilot"
           mkdir -p "$BASE/git-commit"
           cp "$TMP/awesome-copilot/skills/git-commit/SKILL.md" "$BASE/git-commit/SKILL.md"
+          mkdir -p "$BASE/gh-cli"
+          cp "$TMP/awesome-copilot/skills/gh-cli/SKILL.md" "$BASE/gh-cli/SKILL.md"
 
           # pr-creator from google-gemini/gemini-cli
           git clone --depth 1 https://github.com/google-gemini/gemini-cli.git "$TMP/gemini-cli"
