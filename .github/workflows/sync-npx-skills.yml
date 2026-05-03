@@ -1,0 +1,59 @@
+name: Sync npx Skills
+
+on:
+  schedule:
+    - cron: '23 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch skills from upstream repos
+        run: |
+          TMP=$(mktemp -d)
+
+          # git-commit from github/awesome-copilot
+          git clone --depth 1 https://github.com/github/awesome-copilot.git "$TMP/awesome-copilot"
+          cp "$TMP/awesome-copilot/git-commit/SKILL.md" ".claude/plugins/github-flow-toolkit/skills/git-commit/SKILL.md"
+
+          # pr-creator from google-gemini/gemini-cli
+          git clone --depth 1 https://github.com/google-gemini/gemini-cli.git "$TMP/gemini-cli"
+          cp "$TMP/gemini-cli/pr-creator/SKILL.md" ".claude/plugins/github-flow-toolkit/skills/pr-creator/SKILL.md"
+
+          # code-review-expert from sanyuan0704/code-review-expert
+          git clone --depth 1 https://github.com/sanyuan0704/code-review-expert.git "$TMP/code-review-expert"
+          cp "$TMP/code-review-expert/SKILL.md" ".claude/plugins/github-flow-toolkit/skills/code-review-expert/SKILL.md"
+          cp -R "$TMP/code-review-expert/references/"* ".claude/plugins/github-flow-toolkit/skills/code-review-expert/references/"
+
+          # github-actions-docs from xixu-me/skills
+          git clone --depth 1 https://github.com/xixu-me/skills.git "$TMP/xixu-me-skills"
+          cp "$TMP/xixu-me-skills/github-actions-docs/SKILL.md" ".claude/plugins/github-flow-toolkit/skills/github-actions-docs/SKILL.md"
+          cp -R "$TMP/xixu-me-skills/github-actions-docs/references/"* ".claude/plugins/github-flow-toolkit/skills/github-actions-docs/references/"
+
+          rm -rf "$TMP"
+          echo "All skills synced."
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff --stat
+          fi
+
+      - name: Commit and push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .claude/plugins/github-flow-toolkit/skills/
+          git commit -m "chore(skills): sync npx skills from upstream"
+          git push

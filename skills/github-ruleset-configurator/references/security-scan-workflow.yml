@@ -1,0 +1,75 @@
+name: Security Scan
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  security/scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check for blocked file types
+        run: |
+          BLOCKED_PATTERNS=(
+            "*.exe" "*.dll" "*.bat" "*.cmd" "*.com" "*.msi"
+            "*.so" "*.dylib" "*.app" "*.deb" "*.rpm"
+            "*.env" "*.pem" "*.key" "*.p12" "*.jks"
+            "*.secret" "*.credentials"
+          )
+          FOUND=""
+          for pattern in "${BLOCKED_PATTERNS[@]}"; do
+            MATCHES=$(git diff --name-only --diff-filter=A HEAD~1 HEAD 2>/dev/null | grep -i "\.${pattern#\*\.}$" || true)
+            if [ -n "$MATCHES" ]; then
+              FOUND="$FOUND\n$MATCHES"
+            fi
+          done
+          if [ -n "$FOUND" ]; then
+            echo "::error::Blocked file types detected:$FOUND"
+            exit 1
+          fi
+          echo "No blocked file types found."
+
+      - name: Check for sensitive paths
+        run: |
+          SENSITIVE_PATHS=(
+            ".env" ".env.local" ".env.production"
+            "id_rsa" "id_ed25519"
+            ".ssh/" ".aws/credentials"
+            "secrets.json" "credentials.json"
+          )
+          FOUND=""
+          for path in "${SENSITIVE_PATHS[@]}"; do
+            MATCHES=$(git diff --name-only --diff-filter=A HEAD~1 HEAD 2>/dev/null | grep -i "$path" || true)
+            if [ -n "$MATCHES" ]; then
+              FOUND="$FOUND\n$MATCHES"
+            fi
+          done
+          if [ -n "$FOUND" ]; then
+            echo "::error::Sensitive file paths detected:$FOUND"
+            exit 1
+          fi
+          echo "No sensitive file paths found."
+
+      - name: Check file sizes
+        run: |
+          LARGE_FILES=$(git ls-files --others --exclude-standard | xargs -I{} sh -c 'test -f "{}" && [ $(stat -f%z "{}" 2>/dev/null || stat -c%s "{}" 2>/dev/null) -gt 52428800 ] && echo "{}"' 2>/dev/null || true)
+          if [ -n "$LARGE_FILES" ]; then
+            echo "::error::Files exceeding 50MB detected:$LARGE_FILES"
+            exit 1
+          fi
+          echo "All files within size limit."
