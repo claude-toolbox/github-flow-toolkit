@@ -1,5 +1,11 @@
 # github-flow-toolkit
 
+<!-- README-I18N:START -->
+
+**English** | [简体中文](./README.zh.md)
+
+<!-- README-I18N:END -->
+
 A Claude Code plugin that covers the full GitHub Flow lifecycle: conventional commits, PR creation, code review, branch protection, and release tagging.
 
 Just say "commit", "create PR", or "review" in natural language — the plugin handles the rest.
