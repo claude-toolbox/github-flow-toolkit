@@ -1,8 +1,3 @@
----
-description: Route natural language commands to the appropriate skill
-alwaysApply: true
----
-
 When the user requests an action that matches a plugin skill, invoke that skill directly without requiring the user to use slash commands.
 
 Routing map:

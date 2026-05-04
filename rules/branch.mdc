@@ -1,7 +1,0 @@
----
-description: Branch protection rules for backup branches
-alwaysApply: true
----
-
-Branch Rules:
-- Never delete, modify, or merge branches containing `backup` in the name

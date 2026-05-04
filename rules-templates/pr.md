@@ -1,0 +1,4 @@
+PR Rules:
+- Always use the pr-creator skill for creating PRs.
+- Always use the pr-merge skill for merging PRs.
+- Never use `gh pr create` or `gh pr merge` directly.

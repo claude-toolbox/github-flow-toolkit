@@ -26,6 +26,7 @@
 
 | 命令 | 说明 |
 |------|------|
+| `/github-flow-toolkit:init` | 将插件规则安装到 `.claude/rules/` |
 | `/github-flow-toolkit:commit` | 使用约定式提交信息提交 |
 | `/github-flow-toolkit:pr` | 创建 Pull Request |
 | `/github-flow-toolkit:merge` | 选择策略合并 PR |
@@ -60,15 +61,16 @@ commands/
   merge.md               # /github-flow-toolkit:merge
   review.md              # /github-flow-toolkit:review
   ruleset.md             # /github-flow-toolkit:ruleset
+  init.md                # /github-flow-toolkit:init — 安装规则
   pr-template.md         # /github-flow-toolkit:pr-template
   tag.md                 # /github-flow-toolkit:tag
 
-rules/
-  workflow.mdc           # 自然语言 → skill 路由
-  pr.mdc                 # PR 创建/合并策略
-  commit.mdc             # 提交策略（amend、拆分、循环）
-  branch.mdc             # backup 分支保护
-  language.mdc           # 输出语言跟随 Claude Code 设置
+rules-templates/
+  language.md            # 输出语言跟随 Claude Code 设置
+  workflow.md            # 自然语言 → skill 路由
+  pr.md                  # PR 创建/合并策略
+  commit.md              # 提交策略（amend、拆分、循环）
+  branch.md              # backup 分支保护
 
 skills/
   git-commit/            # 约定式提交
@@ -97,13 +99,15 @@ CI 工作流（`sync-skills.yml`）每天运行，从上游仓库获取最新的
 
 ## 规则
 
-插件包含 5 个始终激活的规则：
+安装插件后，运行 `/github-flow-toolkit:init` 将始终激活的规则安装到 `.claude/rules/`。命令会自动检测插件是安装在用户级别（`~/.claude/rules/`）还是项目级别（`.claude/rules/`）。
 
+包含的规则：
+
+- **language** — 输出语言跟随 Claude Code 设置（默认英文）
 - **workflow** — 将自然语言路由到对应的 skill
 - **pr** — 强制使用 pr-creator/pr-merge（不允许直接使用 `gh pr` 命令）
 - **commit** — 同任务 amend、按类型拆分、循环直到干净
 - **branch** — 保护包含 `backup` 的分支
-- **language** — 输出语言跟随 Claude Code 设置（默认英文）
 
 ## 许可证
 

@@ -26,6 +26,7 @@ Just say "commit", "create PR", or "review" in natural language — the plugin h
 
 | Command | Description |
 |---------|-------------|
+| `/github-flow-toolkit:init` | Install plugin rules into `.claude/rules/` |
 | `/github-flow-toolkit:commit` | Commit with conventional commit message |
 | `/github-flow-toolkit:pr` | Create a pull request |
 | `/github-flow-toolkit:merge` | Merge a PR with strategy selection |
@@ -60,15 +61,16 @@ commands/
   merge.md               # /github-flow-toolkit:merge
   review.md              # /github-flow-toolkit:review
   ruleset.md             # /github-flow-toolkit:ruleset
+  init.md                # /github-flow-toolkit:init — install rules
   pr-template.md         # /github-flow-toolkit:pr-template
   tag.md                 # /github-flow-toolkit:tag
 
-rules/
-  workflow.mdc           # Natural language → skill routing
-  pr.mdc                 # PR creation/merge policy
-  commit.mdc             # Commit policy (amend, split, loop)
-  branch.mdc             # Backup branch protection
-  language.mdc           # Output language from Claude Code settings
+rules-templates/
+  language.md            # Output language from Claude Code settings
+  workflow.md            # Natural language → skill routing
+  pr.md                  # PR creation/merge policy
+  commit.md              # Commit policy (amend, split, loop)
+  branch.md              # Backup branch protection
 
 skills/
   git-commit/            # Conventional Commits
@@ -97,13 +99,15 @@ The CI workflow (`sync-skills.yml`) runs daily, fetches the latest SKILL.md file
 
 ## Rules
 
-The plugin includes 5 always-active rules:
+After installing the plugin, run `/github-flow-toolkit:init` to install always-active rules into `.claude/rules/`. The command auto-detects whether the plugin is installed at user level (`~/.claude/rules/`) or project level (`.claude/rules/`).
 
+Rules included:
+
+- **language** — output follows Claude Code's language setting (defaults to English)
 - **workflow** — routes natural language to the appropriate skill
 - **pr** — enforces using pr-creator/pr-merge (no direct `gh pr` commands)
 - **commit** — same-task amend, type-based splitting, loop until clean
 - **branch** — protects branches containing `backup`
-- **language** — output follows Claude Code's language setting (defaults to English)
 
 ## License
 

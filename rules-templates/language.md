@@ -1,6 +1,1 @@
----
-description: Output language follows Claude Code settings, default to English
-alwaysApply: true
----
-
 All user-facing output (reports, summaries, suggestions, error messages) must be written in the language configured in Claude Code's settings (the `language` field). If no language is configured, default to English. Technical terms (file names, code identifiers, variable names, severity levels like P0/P1) always keep their original form regardless of output language.
