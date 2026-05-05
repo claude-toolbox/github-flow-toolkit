@@ -3,6 +3,8 @@ name: pr-merge
 description: 'Merge a GitHub PR with strategy selection. Use when user asks to merge a PR, mentions "/pr-merge", or says "merge PR". Supports: (1) squash/merge/rebase strategy, (2) auto-merge when CI pending, (3) interactive strategy suggestion'
 license: MIT
 allowed-tools: Bash
+context: fork
+agent: github-flow
 ---
 
 # PR Merge

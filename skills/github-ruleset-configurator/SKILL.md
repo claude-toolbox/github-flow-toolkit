@@ -6,6 +6,8 @@ description: >
   or any kind of repository ruleset on GitHub — even if they say "branch protection rules",
   "merge rules", "PR requirements", "protect main branch", or "set up code review rules".
   Also use it to list, update, or delete existing rulesets.
+context: fork
+agent: github-flow
 ---
 
 # GitHub Ruleset Configurator

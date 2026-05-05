@@ -26,7 +26,6 @@ Just say "commit", "create PR", or "review" in natural language — the plugin h
 
 | Command | Description |
 |---------|-------------|
-| `/github-flow-toolkit:init` | Install plugin rules into `.claude/rules/` |
 | `/github-flow-toolkit:commit` | Commit with conventional commit message |
 | `/github-flow-toolkit:pr` | Create a pull request |
 | `/github-flow-toolkit:merge` | Merge a PR with strategy selection |
@@ -36,6 +35,10 @@ Just say "commit", "create PR", or "review" in natural language — the plugin h
 | `/github-flow-toolkit:tag` | Create a release tag |
 
 Or just say "commit", "create PR", "review", "pr template" etc. in natural language.
+
+## Prerequisites
+
+- [GitHub CLI (`gh`)](https://cli.github.com/) — all GitHub operations (PR creation, merging, code review, ruleset configuration, etc.) are performed through `gh`. Must be installed and authenticated (`gh auth login`)
 
 ## Installation
 
@@ -50,42 +53,37 @@ Add the marketplace, then install the plugin:
 
 ```
 .github/workflows/
-  sync-skills.yml    # Daily CI to sync upstream skills
+  sync-skills.yml         # Daily CI to sync upstream skills + inject context/agent
 
 .claude-plugin/
-  plugin.json            # Plugin manifest
+  plugin.json             # Plugin manifest
+
+agents/
+  github-flow.md          # Global agent rules for all skills
 
 commands/
-  commit.md              # /github-flow-toolkit:commit
-  pr.md                  # /github-flow-toolkit:pr
-  merge.md               # /github-flow-toolkit:merge
-  review.md              # /github-flow-toolkit:review
-  ruleset.md             # /github-flow-toolkit:ruleset
-  init.md                # /github-flow-toolkit:init — install rules
-  pr-template.md         # /github-flow-toolkit:pr-template
-  tag.md                 # /github-flow-toolkit:tag
-
-rules-templates/
-  language.md            # Output language from Claude Code settings
-  workflow.md            # Natural language → skill routing
-  pr.md                  # PR creation/merge policy
-  commit.md              # Commit policy (amend, split, loop)
-  branch.md              # Backup branch protection
+  commit.md               # /github-flow-toolkit:commit
+  pr.md                   # /github-flow-toolkit:pr
+  merge.md                # /github-flow-toolkit:merge
+  review.md               # /github-flow-toolkit:review
+  ruleset.md              # /github-flow-toolkit:ruleset
+  pr-template.md          # /github-flow-toolkit:pr-template
+  tag.md                  # /github-flow-toolkit:tag
 
 skills/
-  git-commit/            # Conventional Commits
-  pr-creator/            # PR creation with template compliance
-  pr-template/           # PR template generator
-  pr-merge/              # PR merge with strategy selection
-  code-review-expert/    # SOLID + security + quality review
-  github-actions-docs/   # GitHub Actions documentation
-  github-ruleset-configurator/  # Branch/tag protection rulesets
-  gh-cli/                   # GitHub CLI comprehensive reference
+  git-commit/             # Conventional Commits (synced)
+  gh-cli/                 # GitHub CLI reference (synced)
+  pr-creator/             # PR creation with template compliance (synced)
+  code-review-expert/     # SOLID + security + quality review (synced)
+  github-actions-docs/    # GitHub Actions documentation (synced)
+  pr-template/            # PR template generator (local)
+  pr-merge/               # PR merge with strategy selection (local)
+  github-ruleset-configurator/  # Branch/tag protection rulesets (local)
 ```
 
 ## Skills Sources
 
-Some skills are sourced from [skills.sh](https://skills.sh/) and kept in sync via daily CI:
+Some skills are sourced from external repos and kept in sync via daily CI. The CI also injects `context: fork` and `agent: github-flow` into synced skills automatically.
 
 | Skill | Source |
 |-------|--------|
@@ -95,19 +93,14 @@ Some skills are sourced from [skills.sh](https://skills.sh/) and kept in sync vi
 | code-review-expert | [sanyuan0704/code-review-expert](https://github.com/sanyuan0704/code-review-expert) |
 | github-actions-docs | [xixu-me/skills](https://github.com/xixu-me/skills) |
 
-The CI workflow (`sync-skills.yml`) runs daily, fetches the latest SKILL.md files from upstream repos, and commits changes automatically.
+## Agent
 
-## Rules
+All skills share the `github-flow` agent (defined in `agents/github-flow.md`), which enforces global rules:
 
-After installing the plugin, run `/github-flow-toolkit:init` to install always-active rules into `.claude/rules/`. The command auto-detects whether the plugin is installed at user level (`~/.claude/rules/`) or project level (`.claude/rules/`).
-
-Rules included:
-
-- **language** — output follows Claude Code's language setting (defaults to English)
-- **workflow** — routes natural language to the appropriate skill
-- **pr** — enforces using pr-creator/pr-merge (no direct `gh pr` commands)
-- **commit** — same-task amend, type-based splitting, loop until clean
-- **branch** — protects branches containing `backup`
+- **Commit strategy** — amend unpushed commits for same task, split by type, loop until `git status` is clean
+- **Safety** — no empty commits, no sensitive files, pause on merge conflicts
+- **PR rules** — must use pr-creator/pr-merge, no direct `gh pr` commands
+- **Branch protection** — never delete/modify branches containing `backup`
 
 ## License
 

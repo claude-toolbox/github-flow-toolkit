@@ -26,7 +26,6 @@
 
 | 命令 | 说明 |
 |------|------|
-| `/github-flow-toolkit:init` | 将插件规则安装到 `.claude/rules/` |
 | `/github-flow-toolkit:commit` | 使用约定式提交信息提交 |
 | `/github-flow-toolkit:pr` | 创建 Pull Request |
 | `/github-flow-toolkit:merge` | 选择策略合并 PR |
@@ -36,6 +35,10 @@
 | `/github-flow-toolkit:tag` | 创建发布标签 |
 
 也可以直接用自然语言说 "commit"、"create PR"、"review"、"pr template" 等。
+
+## 前置依赖
+
+- [GitHub CLI (`gh`)](https://cli.github.com/) — 所有 GitHub 操作（PR 创建、合并、代码审查、ruleset 配置等）均通过 `gh` 执行。必须已安装并完成认证（`gh auth login`）
 
 ## 安装
 
@@ -50,42 +53,37 @@
 
 ```
 .github/workflows/
-  sync-skills.yml    # 每日同步上游 skills 的 CI
+  sync-skills.yml         # 每日同步上游 skills + 自动注入 context/agent
 
 .claude-plugin/
-  plugin.json            # 插件清单
+  plugin.json             # 插件清单
+
+agents/
+  github-flow.md          # 所有 skills 共享的全局 agent 规则
 
 commands/
-  commit.md              # /github-flow-toolkit:commit
-  pr.md                  # /github-flow-toolkit:pr
-  merge.md               # /github-flow-toolkit:merge
-  review.md              # /github-flow-toolkit:review
-  ruleset.md             # /github-flow-toolkit:ruleset
-  init.md                # /github-flow-toolkit:init — 安装规则
-  pr-template.md         # /github-flow-toolkit:pr-template
-  tag.md                 # /github-flow-toolkit:tag
-
-rules-templates/
-  language.md            # 输出语言跟随 Claude Code 设置
-  workflow.md            # 自然语言 → skill 路由
-  pr.md                  # PR 创建/合并策略
-  commit.md              # 提交策略（amend、拆分、循环）
-  branch.md              # backup 分支保护
+  commit.md               # /github-flow-toolkit:commit
+  pr.md                   # /github-flow-toolkit:pr
+  merge.md                # /github-flow-toolkit:merge
+  review.md               # /github-flow-toolkit:review
+  ruleset.md              # /github-flow-toolkit:ruleset
+  pr-template.md          # /github-flow-toolkit:pr-template
+  tag.md                  # /github-flow-toolkit:tag
 
 skills/
-  git-commit/            # 约定式提交
-  pr-creator/            # 按模板规范创建 PR
-  pr-template/           # PR 模板生成器
-  pr-merge/              # PR 策略选择合并
-  code-review-expert/    # SOLID + 安全 + 质量审查
-  github-actions-docs/   # GitHub Actions 文档
-  github-ruleset-configurator/  # 分支/标签保护 rulesets
-  gh-cli/                   # GitHub CLI 综合参考
+  git-commit/             # 约定式提交（同步）
+  gh-cli/                 # GitHub CLI 参考（同步）
+  pr-creator/             # 按模板规范创建 PR（同步）
+  code-review-expert/     # SOLID + 安全 + 质量审查（同步）
+  github-actions-docs/    # GitHub Actions 文档（同步）
+  pr-template/            # PR 模板生成器（本地）
+  pr-merge/               # PR 策略选择合并（本地）
+  github-ruleset-configurator/  # 分支/标签保护 rulesets（本地）
 ```
 
 ## Skills 来源
 
-部分 skills 来自 [skills.sh](https://skills.sh/)，通过每日 CI 自动同步：
+部分 skills 来自外部仓库，通过每日 CI 自动同步。CI 还会自动为同步的 skills 注入 `context: fork` 和 `agent: github-flow`。
 
 | Skill | 来源 |
 |-------|------|
@@ -95,19 +93,14 @@ skills/
 | code-review-expert | [sanyuan0704/code-review-expert](https://github.com/sanyuan0704/code-review-expert) |
 | github-actions-docs | [xixu-me/skills](https://github.com/xixu-me/skills) |
 
-CI 工作流（`sync-skills.yml`）每天运行，从上游仓库获取最新的 SKILL.md 文件并自动提交变更。
+## Agent
 
-## 规则
+所有 skills 共享 `github-flow` agent（定义在 `agents/github-flow.md`），强制执行全局规则：
 
-安装插件后，运行 `/github-flow-toolkit:init` 将始终激活的规则安装到 `.claude/rules/`。命令会自动检测插件是安装在用户级别（`~/.claude/rules/`）还是项目级别（`.claude/rules/`）。
-
-包含的规则：
-
-- **language** — 输出语言跟随 Claude Code 设置（默认英文）
-- **workflow** — 将自然语言路由到对应的 skill
-- **pr** — 强制使用 pr-creator/pr-merge（不允许直接使用 `gh pr` 命令）
-- **commit** — 同任务 amend、按类型拆分、循环直到干净
-- **branch** — 保护包含 `backup` 的分支
+- **提交策略** — 同任务 amend 未推送提交、按类型拆分、循环直到 `git status` 干净
+- **安全边界** — 不提交空变更、不提交敏感文件、冲突时暂停
+- **PR 规则** — 必须使用 pr-creator/pr-merge，不允许直接使用 `gh pr` 命令
+- **分支保护** — 禁止删除/修改包含 `backup` 的分支
 
 ## 许可证
 

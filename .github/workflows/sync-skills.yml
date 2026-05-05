@@ -17,7 +17,7 @@ jobs:
       - name: Fetch skills from upstream repos
         run: |
           TMP=$(mktemp -d)
-          BASE=".claude/plugins/github-flow-toolkit/skills"
+          BASE="skills"
 
           # git-commit, gh-cli from github/awesome-copilot
           git clone --depth 1 https://github.com/github/awesome-copilot.git "$TMP/awesome-copilot"
@@ -46,6 +46,19 @@ jobs:
           rm -rf "$TMP"
           echo "All skills synced."
 
+      - name: Inject context and agent into synced skills
+        run: |
+          for skill in git-commit gh-cli pr-creator code-review-expert github-actions-docs; do
+            file="skills/$skill/SKILL.md"
+            if [ -f "$file" ]; then
+              # Insert context and agent before the closing --- of frontmatter
+              # Uses awk to find the second --- and inject lines before it
+              awk '/^---$/ && !done { print "context: fork"; print "agent: github-flow"; done=1 } { print }' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+              echo "Injected into $file"
+            fi
+          done
+          echo "Context and agent injected."
+
       - name: Check for changes
         id: changes
         run: |
@@ -61,6 +74,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .claude/plugins/github-flow-toolkit/skills/
+          git add skills/
           git commit -m "chore(skills): sync skills from upstream"
           git push

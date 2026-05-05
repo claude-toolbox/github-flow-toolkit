@@ -3,6 +3,8 @@ name: pr-template
 description: 'Create or modify GitHub PR templates via interactive questionnaire. Use when user asks to create, add, modify, or customize PR templates. Covers feature, bugfix, refactor, docs, chore and other PR types. Supports both single-file and multi-template directory modes.'
 license: MIT
 allowed-tools: Bash, Read, Write, Edit, AskUserQuestion
+context: fork
+agent: github-flow
 ---
 
 # PR Template Generator

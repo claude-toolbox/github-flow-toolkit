@@ -1,7 +1,7 @@
 {
   "name": "github-flow-toolkit",
   "description": "Complete GitHub Flow workflow: conventional commits, PR lifecycle, code review, issue triage, branch protection, and release tagging",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": {
     "name": "GY"
   }
