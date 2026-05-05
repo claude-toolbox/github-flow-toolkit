@@ -48,7 +48,7 @@ jobs:
 
       - name: Inject context and agent into synced skills
         run: |
-          for skill in git-commit gh-cli pr-creator code-review-expert github-actions-docs; do
+          for skill in git-commit pr-creator code-review-expert; do
             file="skills/$skill/SKILL.md"
             if [ -f "$file" ]; then
               # Insert context and agent before the closing --- of frontmatter
