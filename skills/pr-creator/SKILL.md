@@ -1,10 +1,10 @@
-context: fork
-agent: github-flow
 ---
 name: pr-creator
 description:
   Use this skill when asked to create a pull request (PR). It ensures all PRs
   follow the repository's established templates and standards.
+context: fork
+agent: github-flow
 ---
 
 # Pull Request Creator
