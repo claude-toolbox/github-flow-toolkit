@@ -1,3 +1,5 @@
+context: fork
+agent: github-flow
 ---
 name: pr-creator
 description:
