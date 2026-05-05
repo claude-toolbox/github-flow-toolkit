@@ -52,8 +52,8 @@ jobs:
             file="skills/$skill/SKILL.md"
             if [ -f "$file" ]; then
               # Insert context and agent before the closing --- of frontmatter
-              # Uses awk to find the second --- and inject lines before it
-              awk '/^---$/ && !done { print "context: fork"; print "agent: github-flow"; done=1 } { print }' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+              # Count --- occurrences, inject before the second one
+              awk '/^---$/ { count++ } count == 2 && !done { print "context: fork"; print "agent: github-flow"; done=1 } { print }' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
               echo "Injected into $file"
             fi
           done
